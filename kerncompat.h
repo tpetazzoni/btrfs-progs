@@ -33,11 +33,10 @@
 #include <features.h>
 
 #ifndef __GLIBC__
-#define BTRFS_DISABLE_BACKTRACE
 #define __always_inline __inline __attribute__ ((__always_inline__))
 #endif
 
-#ifndef BTRFS_DISABLE_BACKTRACE
+#ifdef HAVE_BACKTRACE
 #include <execinfo.h>
 #endif
 
@@ -65,7 +64,7 @@
 #define ULONG_MAX       (~0UL)
 #endif
 
-#ifndef BTRFS_DISABLE_BACKTRACE
+#ifdef HAVE_BACKTRACE
 #define MAX_BACKTRACE	16
 static inline void print_trace(void)
 {
@@ -285,7 +284,7 @@ static inline long IS_ERR(const void *ptr)
 #define vmalloc(x) malloc(x)
 #define vfree(x) free(x)
 
-#ifndef BTRFS_DISABLE_BACKTRACE
+#ifdef HAVE_BACKTRACE
 #define BUG_ON(c) assert_trace(#c, __FILE__, __func__, __LINE__, !(c))
 #else
 #define BUG_ON(c) assert(!(c))
@@ -293,7 +292,7 @@ static inline long IS_ERR(const void *ptr)
 
 #define WARN_ON(c) BUG_ON(c)
 
-#ifndef BTRFS_DISABLE_BACKTRACE
+#ifdef HAVE_BACKTRACE
 #define	ASSERT(c) assert_trace(#c, __FILE__, __func__, __LINE__, (c))
 #else
 #define ASSERT(c) assert(c)

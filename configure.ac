@@ -63,22 +63,34 @@ AC_DEFUN([PKG_STATIC], [
   fi
 ])
 
-
+# Provide a --{enable,disable}-backtrace option. If not passed, set
+# enable_backtrace to 'auto' so that we try to enable backtrace
+# support if available, but if not available, we gracefully fallback
+# without backtrace support.
 AC_ARG_ENABLE([backtrace],
   AS_HELP_STRING([--disable-backtrace], [disable btrfs backtrace]),
-  [], [enable_backtrace=yes]
+  [enable_backtrace=${enableval}], [enable_backtrace=auto]
 )
 
-AS_IF([test "x$enable_backtrace" = xno], [
-  AC_DEFINE([BTRFS_DISABLE_BACKTRACE], [1], [disable backtrace stuff in kerncompat.h ])
-])
-
-if test "x$enable_backtrace" = xyes; then
-	AC_CHECK_HEADERS([execinfo.h])
-	AC_CHECK_FUNCS([backtrace backtrace_symbols_fd], [],
-	      AC_MSG_ERROR([standard library does not have backtrace support]))
+# Backtrace support requested (enable_backtrace is either 'yes' or
+# 'auto'), so check for needed headers and functions.
+if test "x$enable_backtrace" != xno; then
+   AC_CHECK_HEADERS([execinfo.h])
+   AC_CHECK_FUNCS([backtrace backtrace_symbols_fd])
 fi
 
+if test "x$ac_cv_func_backtrace" = xno; then
+    # If backtrace support was requested but not available, we fail if
+    # --enable-backtrace was passed, or we simply warn if we're
+    # auto-detecting.
+    if test "x$enable_backtrace" = xyes ; then
+	AC_MSG_ERROR([standard library does not have backtrace support])
+    elif test "x$enable_backtrace" = xauto ; then
+        AC_MSG_WARN([standard library does not have backtrace support, disabled])
+    fi
+else
+    AC_DEFINE([HAVE_BACKTRACE], [1], [Enable backtrace support])
+fi
 
 AC_ARG_ENABLE([documentation],
 	      AS_HELP_STRING([--disable-documentation], [do not build domumentation]),
