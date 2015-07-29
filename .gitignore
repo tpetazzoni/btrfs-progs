@@ -62,7 +62,6 @@ configure
 cscope.out
 depcomp
 libtool
-m4/*.m4
 Makefile
 Documentation/Makefile
 missing

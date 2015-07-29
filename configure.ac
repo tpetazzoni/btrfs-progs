@@ -17,6 +17,7 @@ AC_SUBST([CFLAGS])
 
 AC_PREREQ([2.60])
 
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([config])
 dnl AC_USE_SYSTEM_EXTENSIONS must be called before any macros that run
 dnl the compiler (like AC_PROG_LIBTOOL) to avoid autoconf errors.
@@ -90,6 +91,12 @@ if test "x$ac_cv_func_backtrace" = xno; then
     fi
 else
     AC_DEFINE([HAVE_BACKTRACE], [1], [Enable backtrace support])
+fi
+
+AX_GCC_FUNC_ATTRIBUTE(always_inline)
+
+if test "x$ax_cv_have_func_attribute_always_inline" = xyes; then
+    AC_DEFINE([HAVE_ALWAYS_INLINE], [1], [Enable always_inline support])
 fi
 
 AC_ARG_ENABLE([documentation],

@@ -32,7 +32,7 @@
 
 #include <features.h>
 
-#ifndef __GLIBC__
+#ifdef HAVE_ALWAYS_INLINE
 #define __always_inline __inline __attribute__ ((__always_inline__))
 #endif
 
